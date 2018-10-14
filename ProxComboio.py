@@ -25,3 +25,6 @@ def get_todays_trains():
         depart = row.findAll('td')[2].text.split()
     print(depart)
     return depart
+
+
+get_todays_trains()
