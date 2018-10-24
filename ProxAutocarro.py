@@ -2,18 +2,18 @@ from bs4 import BeautifulSoup
 import requests
 import pandas as pd
 
-data = requests.get('http://www.stcp.pt/pt/itinerarium/soapclient.php?codigo=AAL1').content
-soup = BeautifulSoup(data, 'html.parser')
+data = requests.get('http://www.stcp.pt/pt/itinerarium/soapclient.php?codigo=AAL1').content #Faz um GET a pagina
+soup = BeautifulSoup(data, 'html.parser') #Faz sopinha
 
-table = soup.find_all('table', {'id': 'smsBusResults'})
+table = soup.find_all('table', {'id': 'smsBusResults'}) #Vai buscar a tabela com o id smsBusResults
 
-tr = table[0].find_all('tr')
+tr = table[0].find_all('tr') # Asssocia todos os tr (rows) da tabela a variavel tr
 
 
-headers = []
+headers = [] # Lista de cabecalhos
 for td in tr[0].find_all('th'):
     headers.append(td.text)
-temp_df = pd.DataFrame(columns=headers)
+temp_df = pd.DataFrame(columns=headers) # Procura o cabecalho e define-o como colunas
 
 
 pos = 0
