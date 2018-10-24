@@ -1,34 +1,30 @@
-import requests
 from bs4 import BeautifulSoup
+import requests
+import pandas as pd
+
+data = requests.get('http://www.stcp.pt/pt/itinerarium/soapclient.php?codigo=AAL1').content
+soup = BeautifulSoup(data, 'html.parser')
+
+table = soup.find_all('table', {'id': 'smsBusResults'})
+
+tr = table[0].find_all('tr')
 
 
-def get_next_bus(stopcode):
-    stopcode = 'JDEU4'
-    url = 'http://www.stcp.pt/pt/itinerarium/soapclient.php?codigo=' + stopcode
-    err60 = 'Nao ha autocarros nos proximos 60 minutos'
-    err404 = 'Paragem nao encontrada'
+headers = []
+for td in tr[0].find_all('th'):
+    headers.append(td.text)
+temp_df = pd.DataFrame(columns=headers)
 
-    r = requests.get(url, data={
-        'codigo': stopcode
-    })
 
-    html = r.text
-    soup = BeautifulSoup(html, features='lxml')
+pos = 0
+for i in range(1, len(tr)):
+    temp_list = []
+    for td in tr[i].find_all('td'):
+        value = td.text.replace('\n', '')
+        value = value.replace('\t', '')
+        value = value.replace('-', '')
+        temp_list.append(value)
+    temp_df.loc[pos] = temp_list
+    pos += 1
 
-    if soup.find('Por favor, utilize o codigo SMSBUS indicado na placa da paragem..'):
-        print(err404)
-        # return err404
-    elif soup.find('Nao ha autocarros previstos para a paragem indicada nos proximos 60 minutos.'):
-        print(err60)
-        # return err60
-
-    for row in soup.findAll('table'):
-        depart = row.findAll('td')[1].text.split()
-        print(depart)
-        return depart
-
-get_next_bus('JDEU4')
-
-if sonme]
-dkdf
-
+print(temp_df)
